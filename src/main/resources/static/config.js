@@ -13,4 +13,4 @@
 // Leave empty ('') when running locally on same server.
 // ============================================================
 
-const BACKEND_URL = 'https://YOUR-RENDER-APP.onrender.com';
+const BACKEND_URL = 'https://chatapp-at6l.onrender.com';
