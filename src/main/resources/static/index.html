@@ -406,7 +406,7 @@
                 style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; background: var(--bg-hover);">
 
                 <!-- Background Video (Remote) -->
-                <video id="remoteVideo" autoplay
+                <video id="remoteVideo" autoplay playsinline
                     style="display: none; position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; z-index: 1;"></video>
                 <div id="callBackdrop"
                     style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); z-index: 2;">
@@ -431,15 +431,22 @@
                 <div
                     style="z-index: 5; display: flex; gap: 30px; align-items: center; justify-content: center; width: 100%; padding: 0 40px;">
                     <!-- Minimap video for local stream -->
-                    <video id="localVideo" autoplay muted
+                    <video id="localVideo" autoplay playsinline muted
                         style="display: none; width: 120px; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid white; box-shadow: 0 8px 16px rgba(0,0,0,0.3); align-self: flex-end; margin-right: auto;"></video>
 
                     <div style="display: flex; gap: 20px; flex: 1; justify-content: center;">
+                        <!-- Answer incoming call -->
                         <button class="primary-btn call-btn answer" id="answerCallBtn" style="display: none;"
                             onclick="answerCall()">
                             <i class="fas fa-phone"></i>
                         </button>
-                        <button class="primary-btn call-btn end" onclick="endCall()">
+                        <!-- Deny / hang up -->
+                        <button class="primary-btn call-btn end" id="denyCallBtn" style="display: none;"
+                            onclick="denyCall()">
+                            <i class="fas fa-phone-slash"></i> Decline
+                        </button>
+                        <!-- End active call -->
+                        <button class="primary-btn call-btn end" id="endCallBtn" onclick="endCall()">
                             <i class="fas fa-phone-slash"></i>
                         </button>
                     </div>

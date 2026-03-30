@@ -691,27 +691,19 @@ async function setupPeerConnection() {
         const hasVideo = stream.getVideoTracks().length > 0;
 
         const remoteVideo = document.getElementById('remoteVideo');
-        const remoteAudio = document.getElementById('remoteAudio') || createRemoteAudio();
 
         if (hasVideo) {
             if (remoteVideo) {
                 remoteVideo.srcObject = stream;
                 remoteVideo.style.display = 'block';
-            }
-            // If there's video, the video element will handle both audio and video.
-            // Ensure remoteAudio is not playing if video is present.
-            if (remoteAudio && remoteAudio.srcObject === stream) {
-                remoteAudio.srcObject = null;
+                remoteVideo.play().catch(() => {});
             }
         } else {
-            // Only audio, use the audio element.
+            // Audio-only call: use a persistent <audio> element
+            let remoteAudio = document.getElementById('remoteAudio');
+            if (!remoteAudio) remoteAudio = createRemoteAudio();
             remoteAudio.srcObject = stream;
-            remoteAudio.play().catch(() => { });
-            // Ensure remoteVideo is not playing if only audio is present.
-            if (remoteVideo && remoteVideo.srcObject === stream) {
-                remoteVideo.srcObject = null;
-                remoteVideo.style.display = 'none';
-            }
+            remoteAudio.play().catch(e => console.warn('Audio play blocked:', e));
         }
         document.getElementById('callStatusText').textContent = 'Connected ' + (hasVideo ? '🎬' : '🔊');
     };
@@ -773,6 +765,16 @@ function cleanupCallTokens() {
         peerConnection = null;
     }
     document.getElementById('callOverlay').style.display = 'none';
+    // Reset button visibility to defaults
+    document.getElementById('answerCallBtn').style.display = 'none';
+    document.getElementById('denyCallBtn').style.display = 'none';
+    document.getElementById('endCallBtn').style.display = 'flex';
+    const remoteVideo = document.getElementById('remoteVideo');
+    if (remoteVideo) { remoteVideo.srcObject = null; remoteVideo.style.display = 'none'; }
+    const localVideo = document.getElementById('localVideo');
+    if (localVideo) { localVideo.srcObject = null; localVideo.style.display = 'none'; }
+    const remoteAudio = document.getElementById('remoteAudio');
+    if (remoteAudio) { remoteAudio.srcObject = null; }
     currentCallId = null;
     currentCallType = null;
     isCaller = false;
@@ -804,12 +806,17 @@ async function handleCallSignal(msg) {
         currentChatUser = { username: msg.senderId };
         showCallUI('Incoming Call');
         document.getElementById('callTargetName').textContent = msg.senderId;
-        document.getElementById('callStatusText').textContent = 'Incoming call...';
+        document.getElementById('callStatusText').textContent = '📞 Incoming call...';
         document.getElementById('answerCallBtn').style.display = 'flex';
+        document.getElementById('denyCallBtn').style.display = 'flex';
+        document.getElementById('endCallBtn').style.display = 'none'; // Hide end btn until answered
 
-        // Setup peer to be ready to answer
+        // Store offer SDP to use when answering
+        window._pendingOffer = msg.payload;
+
+        // Setup peer connection early so we're ready to answer
         try {
-            const isVideoCall = !!msg.payload?.callType?.includes('video');
+            const isVideoCall = !!(msg.payload && msg.payload.callType && msg.payload.callType.includes('video'));
             localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: isVideoCall });
             if (isVideoCall) {
                 const localVideo = document.getElementById('localVideo');
@@ -834,20 +841,34 @@ async function handleCallSignal(msg) {
     } else if (msg.type === 'leave') {
         endCall();
         appendLog('Call ended by remote', 'system');
+
+    } else if (msg.type === 'deny') {
+        // Caller receives this when callee declines
+        showToast(msg.senderId + ' declined the call.', true);
+        cleanupCallTokens();
     }
 }
 
 async function answerCall() {
     document.getElementById('answerCallBtn').style.display = 'none';
+    document.getElementById('denyCallBtn').style.display = 'none';
+    document.getElementById('endCallBtn').style.display = 'flex'; // Show hang-up
     document.getElementById('callStatusText').textContent = 'Connecting...';
     try {
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
-        // Important: When answering, the "targetId" of the signal should be whoever called us (which is stored in currentChatUser.username at this point)
         sendSignal('answer', { sdp: answer });
     } catch (e) {
         showToast('Failed to answer call: ' + e.message, true);
     }
+}
+
+function denyCall() {
+    // Tell the caller we declined
+    sendSignal('deny', null);
+    // Clean up everything locally
+    cleanupCallTokens();
+    showToast('Call declined.');
 }
 
 async function loadCallLogs() {
@@ -1109,7 +1130,14 @@ async function createGameRoom(gameId) {
     // Show centered panel
     const modal = document.getElementById('activeGameModal');
     modal.style.display = 'flex';
-    document.getElementById('gameTitle').textContent = gameId.charAt(0).toUpperCase() + gameId.slice(1).replace(/([a-z])([A-Z])/g, '$1 $2');
+    const gameNames = {
+        tictactoe: 'Tic Tac Toe',
+        connect4: 'Connect Four',
+        rps: 'Rock Paper Scissors',
+        chess: 'Chess',
+        nutsandbolts: 'Nuts & Bolts Puzzle'
+    };
+    document.getElementById('gameTitle').textContent = gameNames[gameId] || gameId;
     document.getElementById('gameRoomCodeDisplay').textContent = currentGameRoom;
     document.getElementById('gameStatusContainer').innerHTML =
         `<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Waiting for opponent...`;
@@ -1444,6 +1472,7 @@ function renderGameBoard(gameId) {
             btn.onmouseleave = () => btn.style.background = 'rgba(255,255,255,0.07)';
             btn.onclick = () => {
                 document.querySelectorAll('#gameBoard button').forEach(b => b.disabled = true);
+                window._myRpsChoice = ch.val; // Store for result calculation
                 makeGameMove(ch.val);
                 btn.style.background = 'rgba(16,185,129,0.3)';
                 btn.style.borderColor = '#10b981';
@@ -2186,12 +2215,36 @@ function checkConnect4Win(symbol) {
 function showRpsResult(data) {
     const el = document.getElementById('rps-result');
     if (!el) return;
+
     const myName = Auth.getUser().username;
-    if (data.result) {
-        const icons = { rock: '🪨', paper: '📄', scissors: '✂️' };
-        const opponentChoice = icons[data.opponentChoice] || '?';
-        let resultText = data.result === 'win' ? '🏆 You Win!' : data.result === 'draw' ? '🤝 Draw!' : '😢 You Lose!';
-        el.innerHTML = `<div>You: ${icons[data.myChoice] || '?'} vs Opponent: ${opponentChoice}</div><div style="font-size:1.8rem;margin-top:10px;">${resultText}</div>`;
+    const icons = { rock: '🪨', paper: '📄', scissors: '✂️' };
+
+    // Determine if this update has the opponent's choice
+    if (data.opponentChoice || data.position) {
+        // Server broadcasts the move with player + position
+        const opponentChoice = data.opponentChoice || data.position;
+        // Retrieve my stored choice
+        const myChoice = window._myRpsChoice || 'rock';
+
+        // Calculate winner client-side
+        let resultText = '';
+        if (myChoice === opponentChoice) {
+            resultText = '🤝 Draw!';
+        } else if (
+            (myChoice === 'rock' && opponentChoice === 'scissors') ||
+            (myChoice === 'paper' && opponentChoice === 'rock') ||
+            (myChoice === 'scissors' && opponentChoice === 'paper')
+        ) {
+            resultText = '🏆 You Win!';
+        } else {
+            resultText = '😢 You Lose!';
+        }
+
+        el.innerHTML = `
+            <div style="font-size:1.1rem;">You: ${icons[myChoice] || '?'} vs Opponent: ${icons[opponentChoice] || '?'}</div>
+            <div style="font-size:1.8rem;margin-top:10px;">${resultText}</div>
+        `;
+
         // Re-enable buttons for next round
         setTimeout(() => {
             document.querySelectorAll('#gameBoard button').forEach(b => {
@@ -2200,7 +2253,8 @@ function showRpsResult(data) {
                 b.style.borderColor = 'rgba(255,255,255,0.15)';
             });
             if (el) el.innerHTML = '';
-        }, 2000);
+            window._myRpsChoice = null;
+        }, 2500);
     }
 }
 
