@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Chat Super App</title>
+    <!-- Use Inter font to match the sleek UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            overflow: hidden;
+            background-color: #ffffff;
+        }
+
+        /* Left Side - Branding / Graphic */
+        .auth-hero {
+            flex: 1;
+            background-color: #3b2a50;
+            /* Flat Dark Purple matching reference Nav */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px;
+            position: relative;
+        }
+
+        .auth-hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth-hero p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            max-width: 400px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .hero-icon {
+            font-size: 6rem;
+            margin-bottom: 30px;
+            color: #7b41b9;
+            /* Vibrant flat purple */
+        }
+
+        /* Right Side - Form */
+        .auth-form-container {
+            width: 500px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.05);
+            z-index: 2;
+            overflow-y: auto;
+        }
+
+        .auth-form-container h2 {
+            font-size: 2rem;
+            color: #2d1b46;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #7b41b9;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(123, 65, 185, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #7b41b9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background-color: #6a35a1;
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .auth-links {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .auth-links a {
+            color: #7b41b9;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+            }
+
+            .auth-hero {
+                flex: none;
+                height: 30vh;
+                padding: 20px;
+            }
+
+            .hero-icon {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+
+            .auth-form-container {
+                width: 100%;
+                flex: 1;
+                padding: 40px 30px;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-hero">
+        <i class="fas fa-layer-group hero-icon"></i>
+        <h1>Join the Community</h1>
+        <p>Create an account to start chatting, gaming, and connecting effortlessly.</p>
+    </div>
+
+    <div class="auth-form-container">
+        <h2>Create Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" required autocomplete="username"
+                    placeholder="Choose a username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" required autocomplete="email"
+                    placeholder="Enter your email address">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" required autocomplete="new-password"
+                    placeholder="Create a strong password">
+            </div>
+            <div id="errorMsg" class="error-message"></div>
+            <button type="submit" class="btn">Register</button>
+        </form>
+        <div class="auth-links">
+            <p>Already have an account? <a href="/login.html">Sign in here</a></p>
+        </div>
+    </div>
+
+    <script src="/config.js"></script>
+    <script src="/app.js?v=2"></script>
+    <script>
+        // Redirect if already logged in
+        if (Auth.isAuthenticated()) {
+            window.location.href = '/index.html';
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const errorEl = document.getElementById('errorMsg');
+
+            errorEl.style.display = 'none';
+            btn.textContent = 'Creating account...';
+            btn.disabled = true;
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const data = await fetchApi('/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                if (typeof data === 'string') {
+                    throw new Error(data);
+                }
+
+                Auth.setAuth(data.token, data.user);
+                showToast('Registration successful!');
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 500);
+
+            } catch (err) {
+                errorEl.textContent = err.message || 'Registration failed';
+                errorEl.style.display = 'block';
+                btn.textContent = 'Register';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

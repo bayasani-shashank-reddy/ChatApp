@@ -1,0 +1,887 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ── Design Tokens ─────────────────────────────────────────────── */
+/* ── Design Tokens (Flat Reference UI) ────────────────────────── */
+:root {
+    /* Core Flat Palette */
+    --primary: #7b41b9;
+    /* Vibrant Purple */
+    --primary-dark: #6a35a1;
+    --primary-light: rgba(123, 65, 185, 0.1);
+
+    --nav-bg: #3b2a50;
+    /* Darkest purple for leftmost nav */
+    --list-bg: #4a3562;
+    /* Lighter purple for middle list column */
+    --chat-bg: #f8f9fc;
+    /* Lightest gray/almost white for main chat area */
+
+    --success: #2ecd71;
+    --danger: #e74c3c;
+    --warning: #f1c40f;
+
+    /* Text Hierarchy */
+    --text-light: #ffffff;
+    /* Text on purple backgrounds */
+    --text-muted-light: rgba(255, 255, 255, 0.6);
+    --text-dark: #2d1b46;
+    /* Main text on white background */
+    --text-muted-dark: #8b92a5;
+    /* Secondary text on white background */
+    --text-color: var(--text-dark);
+    --text-muted: var(--text-muted-dark);
+
+    /* Sizing & Layout */
+    --nav-w: 80px;
+    /* Thin left nav */
+    --list-w: 320px;
+    /* Middle list area */
+    --profile-w: 300px;
+    /* Right side profile details area (optional toggle) */
+
+    --radius-xl: 16px;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
+
+    /* Motion & Typography */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --font: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Outfit', 'Inter', sans-serif;
+}
+
+
+/* ── Reset ─────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.2);
+    border-radius: 99px;
+    transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.5);
+}
+
+/* ── Body / Canvas ─────────────────────────────────────────────── */
+body {
+    font-family: var(--font);
+    background: var(--chat-bg);
+    color: var(--text-dark);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 0;
+}
+
+/* Base flat app container */
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    /* Remove rounding for full screen, or add subtle rounding if it's a window */
+    background: var(--chat-bg);
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+}
+
+/* ── 1. Leftmost Side Nav ────────────────────────────────────────── */
+.side-nav {
+    width: var(--nav-w);
+    min-width: var(--nav-w);
+    background: var(--nav-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+    gap: 20px;
+    z-index: 20;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+    --text-color: var(--text-light);
+    --text-muted: var(--text-muted-light);
+}
+
+.nav-brand {
+    font-size: 1.8rem;
+    color: var(--warning);
+    margin-bottom: 20px;
+}
+
+.sidebar-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.tab-btn {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    border: none;
+    border-radius: 14px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(123, 65, 185, 0.4);
+}
+
+.nav-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+}
+
+.nav-action {
+    color: rgba(255, 255, 255, 0.75);
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+}
+
+.nav-action:hover {
+    background: transparent;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* ── 2. Middle List Sidebar ────────────────────────────────────── */
+.sidebar {
+    width: var(--list-w);
+    min-width: var(--list-w);
+    background: var(--list-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    position: relative;
+    border-right: none;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+    --text-color: var(--text-light);
+    --text-muted: var(--text-muted-light);
+}
+
+.sidebar-header {
+    padding: 24px 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: transparent;
+}
+
+/* ── Avatar ────────────────────────────────────────────────────── */
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.3), 0 4px 12px rgba(124, 58, 237, 0.25);
+    font-weight: 600;
+}
+
+/* ── Search Bar ────────────────────────────────────────────────────── */
+.search-bar {
+    display: flex;
+    align-items: center;
+    transition: var(--transition-fast);
+}
+
+.search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Old sidebar-tabs removed */
+
+/* ── List Container & Items ────────────────────────────────────── */
+.list-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+    background: transparent;
+    color: var(--text-light);
+}
+
+.list-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.list-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 4px 0 0 var(--warning);
+}
+
+.list-item .details {
+    flex: 1;
+    min-width: 0;
+}
+
+.list-item .details div {
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-light);
+}
+
+/* ── Status Dots ───────────────────────────────────────────────── */
+.status {
+    font-size: 0.72rem;
+    color: var(--text-muted-light);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.status.online {
+    color: var(--success);
+}
+
+.status.online::before {
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+}
+
+/* ── Right Profile Pane ────────────────────────────────────────── */
+.right-pane {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--chat-bg);
+    border-left: 1px solid var(--border-color);
+    overflow-y: auto;
+    transition: width 0.3s ease;
+}
+
+.right-pane::-webkit-scrollbar {
+    width: 4px;
+}
+
+.right-pane::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+/* ── 3. Main Chat Area ─────────────────────────────────────────── */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    background: var(--chat-bg);
+    position: relative;
+}
+
+/* ── Chat Header ───────────────────────────────────────────────── */
+.chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px;
+    border-bottom: 1px solid #e1e4e8;
+    background: #ffffff;
+    min-height: 68px;
+}
+
+.active-chat-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.active-chat-info .details h3 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.chat-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── WhatsApp Dropdown Menu ────────────────────────────────────── */
+.dropdown-menu {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 200px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 0;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-item {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.dropdown-item i {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-item:hover {
+    background: #f0f2f5;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e1e4e8;
+    margin: 8px 0;
+}
+
+/* ── Messages ──────────────────────────────────────────────────── */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scroll-behavior: smooth;
+}
+
+.empty-state {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted-dark);
+    text-align: center;
+    padding: 40px;
+    gap: 16px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.empty-state i {
+    font-size: 5rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 10px 20px rgba(123, 65, 185, 0.2));
+    margin-bottom: 10px;
+}
+
+.empty-state h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    font-family: var(--font-heading);
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+    color: var(--text-muted-dark);
+    max-width: 360px;
+    line-height: 1.6;
+}
+
+/* ── Message Bubbles ───────────────────────────────────────────── */
+/* ── Message Bubbles ───────────────────────────────────────────── */
+.message-bubble {
+    max-width: 70%;
+    padding: 12px 18px;
+    border-radius: var(--radius-xl);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+    word-break: break-word;
+    animation: bubbleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+@keyframes bubbleIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.message-bubble.sent {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 8px 20px rgba(123, 65, 185, 0.2);
+}
+
+.message-bubble.received {
+    align-self: flex-start;
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    color: var(--text-dark);
+    border-bottom-left-radius: 6px;
+}
+
+.message-time {
+    font-size: 0.68rem;
+    opacity: 0.6;
+    display: block;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.attachment {
+    max-width: 260px;
+    border-radius: 12px;
+    margin-top: 8px;
+    display: block;
+}
+
+/* ── Input Container ───────────────────────────────────────────── */
+/* ── Input Container ───────────────────────────────────────────── */
+.input-container {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #e1e4e8;
+    background: #ffffff;
+    position: relative;
+}
+
+.input-wrapper {
+    flex: 1;
+    background: #f1f3f5;
+    border: 1px solid transparent;
+    border-radius: var(--radius-xl);
+    padding: 0 20px;
+    transition: var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.input-wrapper input {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-dark);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    outline: none;
+    padding: 14px 0;
+}
+
+.input-wrapper input::placeholder {
+    color: var(--text-muted-dark);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+.primary-btn {
+    background: linear-gradient(135deg, var(--primary), #6d28d9);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px 24px;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.primary-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.45);
+}
+
+.primary-btn:hover::after {
+    opacity: 1;
+}
+
+.primary-btn:active {
+    transform: translateY(1px) scale(0.96);
+}
+
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    color: var(--text-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-bounce);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: var(--primary-glow);
+    color: white;
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-2px) rotate(3deg);
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2);
+}
+
+.icon-btn:active {
+    transform: translateY(0) scale(0.92);
+}
+
+/* ── Stories ───────────────────────────────────────────────────── */
+.stories-container {
+    display: flex;
+    gap: 10px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.stories-container::-webkit-scrollbar {
+    height: 2px;
+}
+
+.story-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.story-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    padding: 2px;
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.5);
+    transition: var(--transition);
+}
+
+.story-avatar:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.7);
+}
+
+.story-name {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    text-align: center;
+    max-width: 54px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.story-avatar .icon {
+    color: white;
+    font-size: 0.9rem;
+}
+
+/* ── Games Area ────────────────────────────────────────────────── */
+#gamesArea .game-lobby-header {
+    text-align: center;
+    padding: 36px 20px 24px;
+}
+
+#gamesArea .game-lobby-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #c4b5fd, #f9a8d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-top: 12px;
+}
+
+#gamesArea .game-lobby-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 6px;
+}
+
+/* ── Game Cards ────────────────────────────────────────────────── */
+.game-card {
+    background: #ffffff;
+    border: 1px solid #e1e4e8;
+    border-radius: var(--radius-xl);
+    padding: 28px 24px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+    background: #faf5ff;
+    border-color: var(--primary);
+    box-shadow: 0 12px 24px rgba(123, 65, 185, 0.1);
+}
+
+.game-card h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    font-family: var(--font-heading);
+}
+
+.game-card p {
+    color: var(--text-muted-dark);
+    font-size: 0.85rem;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.game-card .play-now {
+    color: var(--text-muted-dark);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: var(--transition-fast);
+}
+
+.game-card:hover .play-now {
+    transform: translateX(4px);
+    color: var(--primary);
+}
+
+.game-card .game-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+}
+
+/* ── Group Cards ───────────────────────────────────────────────── */
+.group-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+    margin-bottom: 3px;
+    background: transparent;
+    color: var(--text-light);
+    /* Since they show up in the middle list nav */
+}
+
+.group-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+/* ── Modal Overlay ─────────────────────────────────────────────── */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    background: rgba(3, 5, 13, 0.85);
+    backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeOverlay 0.3s ease-out;
+}
+
+@keyframes fadeOverlay {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+
+    to {
+        opacity: 1;
+        backdrop-filter: blur(16px);
+    }
+}
+
+/* ── TicTacToe Board ───────────────────────────────────────────── */
+.tic-tac-toe-board {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* ── Calls list ─────────────────────────────────────────────────── */
+.call-log-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    margin-bottom: 3px;
+    transition: var(--transition);
+}
+
+.call-log-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--glass-border);
+}
+
+/* ── Status Selector ───────────────────────────────────────────── */
+#userStatus {
+    font-family: var(--font);
+    font-size: 0.8rem;
+}
+
+select option {
+    background: #1a1f40;
+}
+
+/* ── Utility Classes ───────────────────────────────────────────── */
+.text-gradient {
+    background: linear-gradient(135deg, #c4b5fd, #f9a8d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-hover {
+    background: rgba(255, 255, 255, 0.05);
+}

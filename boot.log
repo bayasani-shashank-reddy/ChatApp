@@ -1,0 +1,86 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.chatapp:java-server >-----------------------
+[INFO] Building chat-app 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.3:run (default-cli) > test-compile @ java-server >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ java-server ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 9 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ java-server ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 42 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ java-server ---
+[INFO] skip non existing resourceDirectory C:\Users\JNVS_HOME\OneDrive\Desktop\shashank reddy cse\Aurora University\2nd year\Term 3 2nd\Java Programming\Project JP\chat-super-app\java-server\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ java-server ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.2.3:run (default-cli) < test-compile @ java-server <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.3:run (default-cli) @ java-server ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.3)
+
+2026-03-02T22:56:00.917+05:30  INFO 241712 --- [chat-app] [           main] com.chatapp.ChatAppApplication           : Starting ChatAppApplication using Java 25.0.2 with PID 241712 (C:\Users\JNVS_HOME\OneDrive\Desktop\shashank reddy cse\Aurora University\2nd year\Term 3 2nd\Java Programming\Project JP\chat-super-app\java-server\target\classes started by JNVS_HOME in C:\Users\JNVS_HOME\OneDrive\Desktop\shashank reddy cse\Aurora University\2nd year\Term 3 2nd\Java Programming\Project JP\chat-super-app\java-server)
+2026-03-02T22:56:00.922+05:30  INFO 241712 --- [chat-app] [           main] com.chatapp.ChatAppApplication           : No active profile set, falling back to 1 default profile: "default"
+2026-03-02T22:56:01.597+05:30  INFO 241712 --- [chat-app] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-03-02T22:56:01.680+05:30  INFO 241712 --- [chat-app] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 77 ms. Found 9 MongoDB repository interfaces.
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/C:/Users/JNVS_HOME/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.19/tomcat-embed-core-10.1.19.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+2026-03-02T22:56:02.665+05:30  INFO 241712 --- [chat-app] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-03-02T22:56:02.688+05:30  INFO 241712 --- [chat-app] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-02T22:56:02.688+05:30  INFO 241712 --- [chat-app] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-03-02T22:56:02.796+05:30  INFO 241712 --- [chat-app] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-02T22:56:02.797+05:30  INFO 241712 --- [chat-app] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1793 ms
+2026-03-02T22:56:03.095+05:30  INFO 241712 --- [chat-app] [dac.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017 to client view of cluster
+2026-03-02T22:56:03.112+05:30  INFO 241712 --- [chat-app] [           main] org.mongodb.driver.client                : MongoClient with metadata {"application": {"name": "Cluster0"}, "driver": {"name": "mongo-java-driver|sync", "version": "4.11.1"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/25.0.2+10-LTS-69"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=majority, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=MongoCredential{mechanism=null, userName='chatapp', source='admin', password=<hidden>, mechanismProperties=<hidden>}, transportSettings=null, streamFactoryFactory=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@340d6d89, com.mongodb.Jep395RecordCodecProvider@561953e3, com.mongodb.KotlinCodecProvider@443faa85]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[127.0.0.1:27017], srvHost=cluster0.gwpvdac.mongodb.net, srvServiceName=mongodb, mode=MULTIPLE, requiredClusterType=REPLICA_SET, requiredReplicaSetName='atlas-11t4qu-shard-0', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=true, invalidHostNameAllowed=false, context=null}, applicationName='Cluster0', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null}
+2026-03-02T22:56:03.142+05:30  INFO 241712 --- [chat-app] [dac.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017 to client view of cluster
+2026-03-02T22:56:03.146+05:30  INFO 241712 --- [chat-app] [dac.mongodb.net] org.mongodb.driver.cluster               : Adding discovered server ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017 to client view of cluster
+2026-03-02T22:56:03.840+05:30  INFO 241712 --- [chat-app] [           main] org.mongodb.driver.cluster               : No server chosen by WritableServerSelector from cluster description ClusterDescription{type=REPLICA_SET, connectionMode=MULTIPLE, serverDescriptions=[ServerDescription{address=ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}, ServerDescription{address=ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}, ServerDescription{address=ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, type=UNKNOWN, state=CONNECTING}]}. Waiting for 30000 ms before timing out
+2026-03-02T22:56:03.942+05:30  INFO 241712 --- [chat-app] [ngodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, type=REPLICA_SET_PRIMARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=488226100, setName='atlas-11t4qu-shard-0', canonicalAddress=ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, hosts=[ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017], passives=[], arbiters=[], primary='ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='aps1-az3'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTH_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=7fffffff00000000000000cd, setVersion=58, topologyVersion=TopologyVersion{processId=69a01a8adec4266f4fec08c3, counter=9}, lastWriteDate=Mon Mar 02 22:56:02 IST 2026, lastUpdateTimeNanos=49696791368700}
+2026-03-02T22:56:03.942+05:30  INFO 241712 --- [chat-app] [ngodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=488470000, setName='atlas-11t4qu-shard-0', canonicalAddress=ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017, hosts=[ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017], passives=[], arbiters=[], primary='ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='aps1-az1'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTH_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=58, topologyVersion=TopologyVersion{processId=69a01b5bfe7f8e4c79353b7c, counter=5}, lastWriteDate=Mon Mar 02 22:56:02 IST 2026, lastUpdateTimeNanos=49696791584100}
+2026-03-02T22:56:03.942+05:30  INFO 241712 --- [chat-app] [ngodb.net:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, type=REPLICA_SET_SECONDARY, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=488603100, setName='atlas-11t4qu-shard-0', canonicalAddress=ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, hosts=[ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-02.gwpvdac.mongodb.net:27017, ac-h2t8rvo-shard-00-00.gwpvdac.mongodb.net:27017], passives=[], arbiters=[], primary='ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017', tagSet=TagSet{[Tag{name='availabilityZone', value='aps1-az2'}, Tag{name='diskState', value='READY'}, Tag{name='nodeType', value='ELECTABLE'}, Tag{name='provider', value='AWS'}, Tag{name='region', value='AP_SOUTH_1'}, Tag{name='workloadType', value='OPERATIONAL'}]}, electionId=null, setVersion=58, topologyVersion=TopologyVersion{processId=69a01ca00eb0b941374493c1, counter=5}, lastWriteDate=Mon Mar 02 22:56:02 IST 2026, lastUpdateTimeNanos=49696791761000}
+2026-03-02T22:56:03.947+05:30  INFO 241712 --- [chat-app] [ngodb.net:27017] org.mongodb.driver.cluster               : Discovered replica set primary ac-h2t8rvo-shard-00-01.gwpvdac.mongodb.net:27017 with max election id 7fffffff00000000000000cd and max set version 58
+2026-03-02T22:56:05.598+05:30  INFO 241712 --- [chat-app] [           main] o.s.b.a.w.s.WelcomePageHandlerMapping    : Adding welcome page: class path resource [static/index.html]
+2026-03-02T22:56:05.910+05:30  WARN 241712 --- [chat-app] [           main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-03-02T22:56:05.994+05:30  INFO 241712 --- [chat-app] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-03-02T22:56:05.997+05:30  INFO 241712 --- [chat-app] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-03-02T22:56:05.999+05:30  INFO 241712 --- [chat-app] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@d120d7c]]
+2026-03-02T22:56:06.000+05:30  INFO 241712 --- [chat-app] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-03-02T22:56:06.009+05:30  INFO 241712 --- [chat-app] [           main] com.chatapp.ChatAppApplication           : Started ChatAppApplication in 5.781 seconds (process running for 6.317)
+2026-03-02T22:57:05.977+05:30  INFO 241712 --- [chat-app] [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+2026-03-02T23:03:59.804+05:30  INFO 241712 --- [chat-app] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-02T23:03:59.805+05:30  INFO 241712 --- [chat-app] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-02T23:03:59.809+05:30  INFO 241712 --- [chat-app] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 4 ms
+Fetching groups for user: aashritha
+2026-03-02T23:27:06.015+05:30  INFO 241712 --- [chat-app] [essageBroker-14] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 1 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(1)-CONNECTED(1)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 9], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 1], sockJsScheduler[pool size = 16, active threads = 1, queued tasks = 2, completed tasks = 328]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  34:33 min
+[INFO] Finished at: 2026-03-02T23:30:27+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.2.3:run (default-cli) on project java-server: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
