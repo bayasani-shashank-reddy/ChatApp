@@ -12,6 +12,11 @@ let unreadCounts = {}; // username -> count
 let lastMessages = {}; // username -> message content
 let cachedUsers = [];  // snapshot for re-rendering
 
+// WebRTC and Game Synchronization State
+window._pendingIceCandidates = [];
+window._myRpsChoice = null;
+window._opponentRpsChoice = null;
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     if (!Auth.isAuthenticated()) {
@@ -696,7 +701,7 @@ async function setupPeerConnection() {
             if (remoteVideo) {
                 remoteVideo.srcObject = stream;
                 remoteVideo.style.display = 'block';
-                remoteVideo.play().catch(() => {});
+                remoteVideo.play().catch(() => { });
             }
         } else {
             // Audio-only call: use a persistent <audio> element
@@ -826,20 +831,33 @@ async function handleCallSignal(msg) {
                 }
             }
         } catch (e) { console.warn('Mic/Camera denied on incoming call'); }
+        
         await setupPeerConnection();
+        // Set remote description and THEN flush candidates
         await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.payload.sdp));
+        flushIceCandidates();
 
     } else if (msg.type === 'answer') {
         document.getElementById('callStatusText').textContent = 'Connected 🔊';
-        if (peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.payload.sdp));
+        if (peerConnection) {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.payload.sdp));
+            flushIceCandidates();
+        }
 
     } else if (msg.type === 'candidate') {
-        if (peerConnection && msg.payload.candidate) {
-            try { await peerConnection.addIceCandidate(new RTCIceCandidate(msg.payload.candidate)); } catch (e) { }
+        const candidate = msg.payload.candidate;
+        if (!candidate) return;
+
+        if (peerConnection && peerConnection.remoteDescription) {
+            try { await peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); } catch (e) { }
+        } else {
+            // Queue candidates if remote description isn't set yet
+            window._pendingIceCandidates.push(candidate);
         }
 
     } else if (msg.type === 'leave') {
-        endCall();
+        // Fix infinite loop: only cleanup locally, don't call endCall() which sends another leave signal
+        cleanupCallTokens();
         appendLog('Call ended by remote', 'system');
 
     } else if (msg.type === 'deny') {
@@ -849,11 +867,26 @@ async function handleCallSignal(msg) {
     }
 }
 
+function flushIceCandidates() {
+    if (!peerConnection || !peerConnection.remoteDescription) return;
+    console.log(`Flushing ${window._pendingIceCandidates.length} queued ICE candidates`);
+    window._pendingIceCandidates.forEach(async (candidate) => {
+        try { await peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); } catch (e) { }
+    });
+    window._pendingIceCandidates = [];
+}
+
 async function answerCall() {
     document.getElementById('answerCallBtn').style.display = 'none';
     document.getElementById('denyCallBtn').style.display = 'none';
     document.getElementById('endCallBtn').style.display = 'flex'; // Show hang-up
     document.getElementById('callStatusText').textContent = 'Connecting...';
+
+    // Ensure audio element context for autoplay
+    let remoteAudio = document.getElementById('remoteAudio');
+    if (!remoteAudio) remoteAudio = createRemoteAudio();
+    remoteAudio.play().catch(() => {}); // Intent-to-play trigger
+
     try {
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
@@ -1172,8 +1205,23 @@ async function createGameRoom(gameId) {
 }
 
 async function checkGameRoom() {
-    const code = document.getElementById('joinGameInput').value.trim();
+    let code = document.getElementById('joinGameInput').value.trim();
     if (!code) { showToast('Please enter a room code', true); return; }
+
+    // Strip raw URLs if pasted
+    if (code.includes('://')) {
+        try {
+            const url = new URL(code);
+            code = url.pathname.split('/').pop();
+        } catch(e) { /* ignore */ }
+    }
+
+    // Strict validation regex
+    const validPattern = /^(tictactoe|connect4|rps|chess|nutsandbolts)-[a-z0-9]+$/i;
+    if (!validPattern.test(code)) {
+        showToast('Invalid game code. Use e.g., tictactoe-1234', true);
+        return;
+    }
 
     const guessedGameType = code.split('-')[0] || 'unknown';
     try {
@@ -1502,6 +1550,10 @@ function makeGameMove(index) {
     if (!isMyTurn() && gameId !== 'nutsandbolts') {
         showToast("It's not your turn!", true);
         return;
+    }
+
+    if (gameId === 'rps') {
+        window._myRpsChoice = index;
     }
 
     const payload = {
@@ -2216,46 +2268,54 @@ function showRpsResult(data) {
     const el = document.getElementById('rps-result');
     if (!el) return;
 
-    const myName = Auth.getUser().username;
+    window._opponentRpsChoice = data.position;
     const icons = { rock: '🪨', paper: '📄', scissors: '✂️' };
 
-    // Determine if this update has the opponent's choice
-    if (data.opponentChoice || data.position) {
-        // Server broadcasts the move with player + position
-        const opponentChoice = data.opponentChoice || data.position;
-        // Retrieve my stored choice
-        const myChoice = window._myRpsChoice || 'rock';
-
-        // Calculate winner client-side
-        let resultText = '';
-        if (myChoice === opponentChoice) {
-            resultText = '🤝 Draw!';
-        } else if (
-            (myChoice === 'rock' && opponentChoice === 'scissors') ||
-            (myChoice === 'paper' && opponentChoice === 'rock') ||
-            (myChoice === 'scissors' && opponentChoice === 'paper')
-        ) {
-            resultText = '🏆 You Win!';
-        } else {
-            resultText = '😢 You Lose!';
+    // Wait until BOTH players have moved
+    if (!window._myRpsChoice || !window._opponentRpsChoice) {
+        document.getElementById('gameStatusContainer').innerHTML =
+            `<i class="fas fa-hourglass-half" style="margin-right:8px;color:#f59e0b;"></i> <span style="color:#f59e0b;">Opponent moved! Waiting for you...</span>`;
+        if (window._myRpsChoice) {
+            document.getElementById('gameStatusContainer').innerHTML =
+                `<i class="fas fa-clock" style="margin-right:8px;"></i> Waiting for opponent...`;
         }
-
-        el.innerHTML = `
-            <div style="font-size:1.1rem;">You: ${icons[myChoice] || '?'} vs Opponent: ${icons[opponentChoice] || '?'}</div>
-            <div style="font-size:1.8rem;margin-top:10px;">${resultText}</div>
-        `;
-
-        // Re-enable buttons for next round
-        setTimeout(() => {
-            document.querySelectorAll('#gameBoard button').forEach(b => {
-                b.disabled = false;
-                b.style.background = 'rgba(255,255,255,0.07)';
-                b.style.borderColor = 'rgba(255,255,255,0.15)';
-            });
-            if (el) el.innerHTML = '';
-            window._myRpsChoice = null;
-        }, 2500);
+        return;
     }
+
+    const myChoice = window._myRpsChoice;
+    const opponentChoice = window._opponentRpsChoice;
+
+    // Calculate winner client-side
+    let resultText = '';
+    if (myChoice === opponentChoice) {
+        resultText = '🤝 Draw!';
+    } else if (
+        (myChoice === 'rock' && opponentChoice === 'scissors') ||
+        (myChoice === 'paper' && opponentChoice === 'rock') ||
+        (myChoice === 'scissors' && opponentChoice === 'paper')
+    ) {
+        resultText = '🏆 You Win!';
+    } else {
+        resultText = '😢 You Lose!';
+    }
+
+    el.innerHTML = `
+        <div style="font-size:1.1rem;">You: ${icons[myChoice] || '?'} vs Opponent: ${icons[opponentChoice] || '?'}</div>
+        <div style="font-size:1.8rem;margin-top:10px;">${resultText}</div>
+    `;
+
+    // Re-enable buttons for next round after delay
+    setTimeout(() => {
+        document.querySelectorAll('#gameBoard button').forEach(b => {
+            b.disabled = false;
+            b.style.background = 'rgba(255,255,255,0.07)';
+            b.style.borderColor = 'rgba(255,255,255,0.15)';
+        });
+        if (el) el.innerHTML = '';
+        window._myRpsChoice = null;
+        window._opponentRpsChoice = null;
+        setTurnStatus();
+    }, 3000);
 }
 
 function quitGame() {
