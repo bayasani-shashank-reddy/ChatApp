@@ -647,7 +647,16 @@ function removeTempLoading() {
 
 let peerConnection = null;
 let localStream = null;
-const ICE_SERVERS = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }] };
+const ICE_SERVERS = {
+    iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        { urls: 'stun:stun4.l.google.com:19302' },
+        { urls: 'stun:stun.stunprotocol.org:3478' }
+    ]
+};
 
 async function startAudioCall() {
     if (!currentChatUser) { showToast('Select a user to call first', true); return; }
@@ -1150,7 +1159,6 @@ let currentGameRoom = null;
 async function createGameRoom(gameId) {
     const tempRoomId = gameId + '-' + Date.now().toString(36).slice(-4) + Math.random().toString(36).substring(2, 5);
 
-    // Call server API to persist room validation
     try {
         const payload = {
             roomId: tempRoomId,
@@ -1166,11 +1174,13 @@ async function createGameRoom(gameId) {
 
     gameState.mySymbol = 'X';
     gameState.myUsername = Auth.getUser().username;
-    gameState.turn = null; // Wait for opponent
+    gameState.turn = (gameId === 'nutsandbolts') ? gameState.myUsername : null;
 
-    // Show centered panel
     const modal = document.getElementById('activeGameModal');
     modal.style.display = 'flex';
+    const board = document.getElementById('gameBoard');
+    board.style.display = 'flex';
+
     const gameNames = {
         tictactoe: 'Tic Tac Toe',
         connect4: 'Connect Four',
@@ -1180,28 +1190,32 @@ async function createGameRoom(gameId) {
     };
     document.getElementById('gameTitle').textContent = gameNames[gameId] || gameId;
     document.getElementById('gameRoomCodeDisplay').textContent = currentGameRoom;
-    document.getElementById('gameStatusContainer').innerHTML =
-        `<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Waiting for opponent...`;
 
-    // Show waiting UI on board
-    const board = document.getElementById('gameBoard');
-    board.style.display = 'flex';
-    board.innerHTML = `
+    if (gameId === 'nutsandbolts') {
+        renderGameBoard('nutsandbolts');
+        document.getElementById('gameStatusContainer').innerHTML =
+            `<i class="fas fa-hand-point-right" style="color:#10b981;margin-right:8px;"></i> <strong style="color:#10b981;">Your turn! ⚙️</strong>`;
+    } else {
+        document.getElementById('gameStatusContainer').innerHTML =
+            `<i class="fas fa-spinner fa-spin" style="margin-right:8px;"></i> Waiting for opponent...`;
+        board.innerHTML = `
         <div style="text-align:center; color:white; padding:40px; display:flex; flex-direction:column; align-items:center; gap:20px;">
-            <div style="font-size:4rem; animation: pulse 2s infinite;">⏳</div>
-            <h2 style="font-size:1.8rem; font-weight:700;">Waiting for Opponent</h2>
-            <p style="color:rgba(255,255,255,0.6); max-width:300px;">Share the room code below with a friend. The game will start automatically when they join!</p>
-            <div style="font-size:1.5rem; font-family:monospace; font-weight:bold; letter-spacing:4px; background:rgba(255,255,255,0.05); padding:15px 30px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); color:#a78bfa; margin-top:10px;">
-                ${currentGameRoom}
+            <div style="width:80px; height:80px; border-radius:50%; background:rgba(123, 65, 185, 0.1); display:flex; align-items:center; justify-content:center; color:var(--primary); font-size:2rem;">
+                <i class="fas fa-hourglass-half fa-spin"></i>
             </div>
-            <button onclick="shareGameRoomCode()" class="primary-btn" style="margin-top:10px;"><i class="fas fa-share-alt" style="margin-right:8px;"></i> Share Code</button>
-        </div>
-    `;
+            <h2 style="font-size:1.8rem; font-weight:700;">Waiting for Opponent</h2>
+            <p style="color:rgba(255,255,255,0.7); max-width:300px; line-height:1.6;">Share the room code below with a friend. The game will start automatically when they join!</p>
+            <div style="background:rgba(0,0,0,0.3); padding:15px 30px; border-radius:16px; border:1px solid rgba(255,255,255,0.1); margin-top:10px;">
+               <span style="font-family:monospace; font-size:1.4rem; letter-spacing:2px; font-weight:700; color:var(--primary);">${currentGameRoom}</span>
+            </div>
+            <button onclick="shareGameRoomCode()" class="primary-btn" style="margin-top:10px; padding:12px 30px;">
+                <i class="fas fa-share-alt" style="margin-right:10px;"></i> Share Code
+            </button>
+        </div>`;
+    }
 
-    // Load side chat
     toggleGameChatTarget();
 
-    // Subscribe and Join
     if (stompClient) {
         stompClient.subscribe(`/topic/game/${currentGameRoom}`, handleGameUpdate);
         stompClient.send(`/app/game.join`, {}, JSON.stringify({
