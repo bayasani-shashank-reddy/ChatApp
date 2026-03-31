@@ -842,6 +842,14 @@ async function handleCallSignal(msg) {
         if (peerConnection) {
             await peerConnection.setRemoteDescription(new RTCSessionDescription(msg.payload.sdp));
             flushIceCandidates();
+
+            // Ensure caller side also triggers play context
+            let remoteAudio = document.getElementById('remoteAudio');
+            if (remoteAudio) {
+                remoteAudio.muted = false;
+                remoteAudio.volume = 1.0;
+                remoteAudio.play().catch(e => console.warn('Caller audio blocked:', e));
+            }
         }
 
     } else if (msg.type === 'candidate') {
@@ -1298,6 +1306,9 @@ function setTurnStatus() {
     }
     if (myTurn) {
         statusEl.innerHTML = `<i class="fas fa-hand-point-right" style="color:#10b981;margin-right:8px;"></i> <strong style="color:#10b981;">Your turn! ${symbolDisplay}</strong>`;
+    } else if (gameId === 'nutsandbolts') {
+        // Always your turn for single player puzzles
+        statusEl.innerHTML = `<i class="fas fa-hand-point-right" style="color:#10b981;margin-right:8px;"></i> <strong style="color:#10b981;">Your turn! ⚙️</strong>`;
     } else {
         statusEl.innerHTML = `<i class="fas fa-hourglass-half" style="margin-right:8px;color:#f59e0b;"></i> <span style="color:#f59e0b;">Opponent's turn...</span>`;
     }
@@ -1580,7 +1591,7 @@ function makeGameMove(index) {
         }
     }
 
-    if (stompClient) {
+    if (stompClient && gameId !== 'nutsandbolts') {
         stompClient.send('/app/game.move', {}, JSON.stringify(payload));
     }
 }
@@ -2027,7 +2038,7 @@ function drawNabBoard() {
 
 function handleNabClick(index) {
     if (gameState.gameOver) return;
-    if (!isMyTurn()) { showToast("It's not your turn!", true); return; }
+    // Remove isMyTurn() check for single-player puzzle
 
     if (nabState.selectedIdx === null) {
         if (nabState.board[index].length > 0) {
@@ -2268,7 +2279,12 @@ function showRpsResult(data) {
     const el = document.getElementById('rps-result');
     if (!el) return;
 
-    window._opponentRpsChoice = data.position;
+    const myName = Auth.getUser().username;
+    // Only capture position as opponent's choice if the sender is NOT me
+    if (data.player !== myName) {
+        window._opponentRpsChoice = data.position;
+    }
+
     const icons = { rock: '🪨', paper: '📄', scissors: '✂️' };
 
     // Wait until BOTH players have moved
